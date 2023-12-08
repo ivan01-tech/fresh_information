@@ -20,6 +20,7 @@
   box-sizing: border-box;
   font-family: "NunitoSans_7pt-Regular", sans-serif;
 }
+
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
@@ -101,6 +102,5 @@ body {
   }
 
   body {
-    @apply bg-background text-foreground;
   }
 }
