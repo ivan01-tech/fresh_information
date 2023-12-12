@@ -8,12 +8,42 @@ import { SlHome } from "react-icons/sl";
 import { BsInfoSquare, BsEnvelopeAt } from "react-icons/bs";
 import { IconType } from "react-icons";
 import { Button } from "./ui/button";
+import {} from "postcss";
 import { Input } from "./ui/input";
+import { DialogCloseButton } from "./ui/Modal";
+import { TooltipDemo } from "./table/tooltip";
 
 type Props = {
   show: boolean;
   setter: (val: unknown) => void;
 };
+export const SidebarLink = [
+  {
+    path: "/dashboard",
+    title: "Dashboard",
+    isActive: function (pathname: string) {
+      return this.path == pathname;
+    },
+    icone: SlHome,
+  },
+  {
+    path: "/contacts",
+    title: "Contacts",
+    isActive: function (pathname: string) {
+      return this.path == pathname;
+    },
+    icone: BsEnvelopeAt,
+  },
+  {
+    path: "/about",
+    title: "About Us",
+    isActive: function (pathname: string) {
+      return this.path == pathname;
+    },
+    icone: BsInfoSquare,
+  },
+];
+
 export default function Sidebar({ show, setter }: Props) {
   const router = usePathname();
 
@@ -34,15 +64,18 @@ export default function Sidebar({ show, setter }: Props) {
     route: string;
   }) => {
     // Highlight menu item based on currently displayed route
-    const colorClass = router === route ? "" : "text-white/50 hover:text-white";
+    const colorClass =
+      router === route ? "text-white" : "text-white/50 hover:text-white";
 
     return (
       <Link
         href={route}
         onClick={setter}
-        className={`flex gap-1 [&>*]:my-auto text-md pl-6 py-3 border-b-[1px] border-b-white/10 ${colorClass}`}
+        className={`flex gap-1 [&>*]:my-auto text-md pl-2 py-2 border-b-[1px] border-b-white/10 ${colorClass} font-bold`}
       >
-        <div className="text-xl flex [&>*]:mx-auto w-[30px]">{<Icon />}</div>
+        <div className="text-xl flex [&>*]:mx-auto w-[30px] ">
+          {<Icon className="font-bold" />}
+        </div>
         <div>{name}</div>
       </Link>
     );
@@ -58,7 +91,7 @@ export default function Sidebar({ show, setter }: Props) {
 
   return (
     <div className="relative">
-      <div className={`${className}${appendClass} bg-blue-500`}>
+      <div className={`${className}${appendClass} bg-forthColor`}>
         <div className="p-2 flex">
           <Link href="/">
             <h1 className="text-xl text-center font-bold p-2 uppercase">
@@ -67,11 +100,17 @@ export default function Sidebar({ show, setter }: Props) {
           </Link>
         </div>
         <div className="flex gap-3 flex-col px-2">
-          <MenuItem name="Home" route="/" Icon={SlHome} />
-          <MenuItem name="About Us" route="/about" Icon={BsInfoSquare} />
-          <MenuItem name="Contact" route="/contact" Icon={BsEnvelopeAt} />
+          {SidebarLink.map((link) => (
+            <MenuItem
+              key={link.path}
+              name={link.title}
+              route={link.path}
+              Icon={link.icone}
+            />
+          ))}
+          <TooltipDemo></TooltipDemo>
+          <DialogCloseButton />
           <Button>Text Btn</Button>
-
           <Input type="email" placeholder="Email" />
         </div>
       </div>

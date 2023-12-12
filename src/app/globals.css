@@ -104,3 +104,24 @@ body {
   body {
   }
 }
+
+.custom-shape-divider-top-1702328740 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.custom-shape-divider-top-1702328740 svg {
+  position: relative;
+  display: block;
+  width: calc(257% + 1.3px);
+  height: 407px;
+}
+
+.custom-shape-divider-top-1702328740 .shape-fill {
+  fill: #2b3499;
+}
