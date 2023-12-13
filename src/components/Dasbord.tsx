@@ -1,6 +1,6 @@
 "use client";
 
-// @/components/Layout/Sidebar.js
+import { FaInfo } from "react-icons/fa6";
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -27,20 +27,22 @@ export const SidebarLink = [
     icone: SlHome,
   },
   {
+    path: "/dashboard/informations",
+    title: "Informations",
+    isActive: function (pathname: string) {
+      console.log("pathname : " + pathname);
+      return this.path == pathname;
+    },
+    // icone: FaInfo,
+    icone: BsInfoSquare,
+  },
+  {
     path: "/contacts",
     title: "Contacts",
     isActive: function (pathname: string) {
       return this.path == pathname;
     },
     icone: BsEnvelopeAt,
-  },
-  {
-    path: "/about",
-    title: "About Us",
-    isActive: function (pathname: string) {
-      return this.path == pathname;
-    },
-    icone: BsInfoSquare,
   },
 ];
 
@@ -110,8 +112,6 @@ export default function Sidebar({ show, setter }: Props) {
           ))}
           <TooltipDemo></TooltipDemo>
           <DialogCloseButton />
-          <Button>Text Btn</Button>
-          <Input type="email" placeholder="Email" />
         </div>
       </div>
       {show ? <ModalOverlay /> : <></>}

@@ -1,0 +1,25 @@
+User {
+    firstName
+    lastName
+    username
+    email
+    password
+    condfirmpassword
+    role : ["admin":"baseuser"]
+}
+
+Information{
+    title
+    description
+    image : firestore
+    status :"active":"unvalid":"pending"
+    niveauConcernes : [niveauConcerne] 
+}
+
+Niveau {
+    ecole
+    faculte
+    filiere
+    nieveau
+    campus
+}

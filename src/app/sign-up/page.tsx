@@ -63,7 +63,9 @@ export default function SingUpAccount() {
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">
+                  Email <span className="text-red-500 text-[.7rem]">*</span>
+                </Label>
                 <Input
                   {...register("email", { required: true })}
                   id="email"
