@@ -1,16 +1,25 @@
 "use client";
+import { AiOutlineDelete } from "react-icons/ai";
+import { SlCloudUpload } from "react-icons/sl";
+import * as React from "react";
 import { IoMdAdd } from "react-icons/io";
 import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -23,8 +32,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
-
+import {
+  ArrowUpDown,
+  ChevronDown,
+  DeleteIcon,
+  MoreHorizontal,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -46,48 +59,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Label } from "../ui/label";
+import { DataTablePagination } from "./DataTablePagination";
+import { DataTableColumnHeader } from "./DataTableColumnHeader";
+import { InformationCreation, generateObjects } from "@/model/Information";
+import { Textarea } from "../ui/textarea";
 
-const data: Payment[] = [
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@yahoo.com",
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@gmail.com",
-  },
-  {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@gmail.com",
-  },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@gmail.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@hotmail.com",
-  },
-];
+const data: InformationCreation[] = generateObjects(105);
 
-export type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
-};
-
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<InformationCreation>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -111,47 +90,75 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "id",
+    header: ({ column }) => {
+      return (
+        <>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            ID
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </>
+      );
+    },
+    cell: ({ row }) => <div className="">{row.getValue("id")}</div>,
+  },
+
+  {
+    accessorKey: "title",
+    header: ({ column }) => {
+      return (
+        <>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Title
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("title")}</div>
+    ),
+  },
+  {
+    accessorKey: "description",
+    header: "Description",
+    cell: ({ row }) => {
+      return (
+        <div className="text-center font-medium">
+          {row.getValue("description")}
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "status",
-    header: "Status",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Status" />
+    ),
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue("status")}</div>
     ),
   },
   {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-
-      return <div className="text-right font-medium">{formatted}</div>;
-    },
+    accessorKey: "created_at",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="created_at" />
+    ),
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("created_at")}</div>
+    ),
   },
   {
     id: "actions",
-    enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original;
+      const InformationCreation = row.original;
 
       return (
         <DropdownMenu>
@@ -164,13 +171,16 @@ export const columns: ColumnDef<Payment>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() =>
+                navigator.clipboard.writeText(InformationCreation.id)
+              }
             >
-              Copy payment ID
+              View details
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>Activate</DropdownMenuItem>
+            <DropdownMenuItem>Update</DropdownMenuItem>
+            <DropdownMenuItem>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -207,8 +217,8 @@ export function DataTableDemo() {
   });
 
   return (
-    <div className="w-full">
-      <div className="flex items-center py-4">
+    <div className="w-full ">
+      <div className="flex  items-center py-4 ">
         {/* create new information dialog */}
         <Dialog>
           <DialogTrigger asChild>
@@ -217,8 +227,8 @@ export function DataTableDemo() {
               <span>Create new</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="top-[10rem]">
-            <form action=" ">
+          <DialogContent className="top-[15rem]  !w-[90%] max-w-[900px] m-2 !h-auto">
+            <form action=" " className="flex !h-auto flex-col gap-3">
               <DialogHeader>
                 <DialogTitle>Add New Information</DialogTitle>
                 <DialogDescription>
@@ -229,7 +239,7 @@ export function DataTableDemo() {
               </DialogHeader>
               <div className="grid gap-2 my-2">
                 <Label htmlFor="email">
-                  Email <span className="text-red-500 text-[.7rem]">*</span>
+                  Title <span className="text-red-500 text-[.7rem]">*</span>
                 </Label>
                 <Input
                   // {...register("email", { required: true })}
@@ -243,6 +253,121 @@ export function DataTableDemo() {
                     {errors.email.message}
                   </p>
                 )} */}
+              </div>
+
+              <div className="grid gap-2 my-2">
+                <Label htmlFor="description">
+                  Description{" "}
+                  <span className="text-red-500 text-[.7rem]">*</span>
+                </Label>
+
+                <Textarea />
+                {/* {errors.email && (
+                  <p className="text-red-500 text-[.7rem]">
+                    {errors.email.message}
+                  </p>
+                )} */}
+              </div>
+
+              <div className="grid gap-2 my-2">
+                <p className="my-2">Ajouter une filiere</p>
+                <div className="border border-gray-300 hover:border-gray-800 rounded p-2 relative flex flex-col gap-[-0.8rem]">
+                  <h3 className="text-gray-900 text-xl font-bold">
+                    Informatique - L3
+                  </h3>
+                  <h5 className="font-medium text-sm">Faculte des sciences</h5>
+                  <p className="font-light text-[.6rem]">campus 3</p>
+
+                  <div className="absolute right-0 top-0 m-2 w-auto">
+                    <Button
+                      variant={"outline"}
+                      className="bg-red-300 text-2xl !p-3 text-red-700 border-red-700"
+                    >
+                      <AiOutlineDelete></AiOutlineDelete>
+                    </Button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <Select>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Selectionner un campus" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Campus</SelectLabel>
+                        <SelectItem value="apple">Apple</SelectItem>
+                        <SelectItem value="banana">Banana</SelectItem>
+                        <SelectItem value="blueberry">Blueberry</SelectItem>
+                        <SelectItem value="grapes">Grapes</SelectItem>
+                        <SelectItem value="pineapple">Pineapple</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <Select>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Selectionner un campus" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Campus</SelectLabel>
+                        <SelectItem value="apple">Apple</SelectItem>
+                        <SelectItem value="banana">Banana</SelectItem>
+                        <SelectItem value="blueberry">Blueberry</SelectItem>
+                        <SelectItem value="grapes">Grapes</SelectItem>
+                        <SelectItem value="pineapple">Pineapple</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <Select>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Selectionner une filiere" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Filiere</SelectLabel>
+                        <SelectItem value="apple">Apple</SelectItem>
+                        <SelectItem value="banana">Banana</SelectItem>
+                        <SelectItem value="blueberry">Blueberry</SelectItem>
+                        <SelectItem value="grapes">Grapes</SelectItem>
+                        <SelectItem value="pineapple">Pineapple</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <Select>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Selectionner un Niveau" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Niveau</SelectLabel>
+                        <SelectItem value="apple">Apple</SelectItem>
+                        <SelectItem value="banana">Banana</SelectItem>
+                        <SelectItem value="blueberry">Blueberry</SelectItem>
+                        <SelectItem value="grapes">Grapes</SelectItem>
+                        <SelectItem value="pineapple">Pineapple</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid  w-full lg:max-w-sm items-center gap-1.5">
+                <Label
+                  className="w-full h-[250px] border-[2px] border-forthColor rounded-md !border-dashed"
+                  htmlFor="picture"
+                >
+                  <div className="w-full flex flex-col justify-center items-center text-forthColor/40 font-bold h-full gap-3">
+                    <p className="text-3xl">
+                      <SlCloudUpload></SlCloudUpload>
+                    </p>
+                    <p>Select to upload related images </p>
+                  </div>
+                </Label>
+                <Input
+                  id="picture"
+                  type="file"
+                  className="file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 hidden"
+                />
               </div>
             </form>
           </DialogContent>
@@ -339,24 +464,8 @@ export function DataTableDemo() {
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
+
+        <DataTablePagination table={table} />
       </div>
     </div>
   );
