@@ -1,25 +1,8 @@
 "use client";
-import { AiOutlineDelete } from "react-icons/ai";
-import { SlCloudUpload } from "react-icons/sl";
+import { useModal } from "@/hooks/useModal";
 import * as React from "react";
 import { IoMdAdd } from "react-icons/io";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -32,12 +15,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  ChevronDown,
-  DeleteIcon,
-  MoreHorizontal,
-} from "lucide-react";
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -61,10 +39,14 @@ import {
 import { Label } from "../ui/label";
 import { DataTablePagination } from "./DataTablePagination";
 import { DataTableColumnHeader } from "./DataTableColumnHeader";
-import { InformationCreation, generateObjects } from "@/model/Information";
-import { Textarea } from "../ui/textarea";
+import {
+  InformationCreation,
+  generatedRandomObject,
+} from "@/model/Information";
+import ModalComp from "../coustom/ModalComp";
+import AddInformationForm from "../coustom/AddInformationForm";
 
-const data: InformationCreation[] = generateObjects(105);
+const data: InformationCreation[] = generatedRandomObject;
 
 export const columns: ColumnDef<InformationCreation>[] = [
   {
@@ -196,6 +178,11 @@ export function DataTableDemo() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const {
+    onOpen: onOpenPIModal,
+    isOpen: isOpenPIModal,
+    onClose: onClosePIModal,
+  } = useModal();
 
   const table = useReactTable({
     data,
@@ -220,165 +207,28 @@ export function DataTableDemo() {
     <div className="w-full ">
       <div className="flex  items-center py-4 ">
         {/* create new information dialog */}
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="flex items-center gap-2 mr-2 bg-forthColor text-white font-bold">
-              <IoMdAdd />
-              <span>Create new</span>
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="top-[15rem]  !w-[90%] max-w-[900px] m-2 !h-auto">
-            <form action=" " className="flex !h-auto flex-col gap-3">
-              <DialogHeader>
-                <DialogTitle>Add New Information</DialogTitle>
-                <DialogDescription>
-                  Fields with{" "}
-                  <span className="text-red-500 text-[.7rem]">*</span> are
-                  required
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-2 my-2">
-                <Label htmlFor="email">
-                  Title <span className="text-red-500 text-[.7rem]">*</span>
-                </Label>
-                <Input
-                  // {...register("email", { required: true })}
-                  id="email"
-                  className="!p-0 h-8 focus:outline-none"
-                  type="email"
-                  placeholder=""
-                />
-                {/* {errors.email && (
-                  <p className="text-red-500 text-[.7rem]">
-                    {errors.email.message}
-                  </p>
-                )} */}
-              </div>
 
-              <div className="grid gap-2 my-2">
-                <Label htmlFor="description">
-                  Description{" "}
-                  <span className="text-red-500 text-[.7rem]">*</span>
-                </Label>
-
-                <Textarea />
-                {/* {errors.email && (
-                  <p className="text-red-500 text-[.7rem]">
-                    {errors.email.message}
-                  </p>
-                )} */}
-              </div>
-
-              <div className="grid gap-2 my-2">
-                <p className="my-2">Ajouter une filiere</p>
-                <div className="border border-gray-300 hover:border-gray-800 rounded p-2 relative flex flex-col gap-[-0.8rem]">
-                  <h3 className="text-gray-900 text-xl font-bold">
-                    Informatique - L3
-                  </h3>
-                  <h5 className="font-medium text-sm">Faculte des sciences</h5>
-                  <p className="font-light text-[.6rem]">campus 3</p>
-
-                  <div className="absolute right-0 top-0 m-2 w-auto">
-                    <Button
-                      variant={"outline"}
-                      className="bg-red-300 text-2xl !p-3 text-red-700 border-red-700"
-                    >
-                      <AiOutlineDelete></AiOutlineDelete>
-                    </Button>
-                  </div>
-                </div>
-                <div className="grid grid-cols-3 gap-3">
-                  <Select>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Selectionner un campus" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Campus</SelectLabel>
-                        <SelectItem value="apple">Apple</SelectItem>
-                        <SelectItem value="banana">Banana</SelectItem>
-                        <SelectItem value="blueberry">Blueberry</SelectItem>
-                        <SelectItem value="grapes">Grapes</SelectItem>
-                        <SelectItem value="pineapple">Pineapple</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <Select>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Selectionner un campus" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Campus</SelectLabel>
-                        <SelectItem value="apple">Apple</SelectItem>
-                        <SelectItem value="banana">Banana</SelectItem>
-                        <SelectItem value="blueberry">Blueberry</SelectItem>
-                        <SelectItem value="grapes">Grapes</SelectItem>
-                        <SelectItem value="pineapple">Pineapple</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <Select>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Selectionner une filiere" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Filiere</SelectLabel>
-                        <SelectItem value="apple">Apple</SelectItem>
-                        <SelectItem value="banana">Banana</SelectItem>
-                        <SelectItem value="blueberry">Blueberry</SelectItem>
-                        <SelectItem value="grapes">Grapes</SelectItem>
-                        <SelectItem value="pineapple">Pineapple</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <Select>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Selectionner un Niveau" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Niveau</SelectLabel>
-                        <SelectItem value="apple">Apple</SelectItem>
-                        <SelectItem value="banana">Banana</SelectItem>
-                        <SelectItem value="blueberry">Blueberry</SelectItem>
-                        <SelectItem value="grapes">Grapes</SelectItem>
-                        <SelectItem value="pineapple">Pineapple</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid  w-full lg:max-w-sm items-center gap-1.5">
-                <Label
-                  className="w-full h-[250px] border-[2px] border-forthColor rounded-md !border-dashed"
-                  htmlFor="picture"
-                >
-                  <div className="w-full flex flex-col justify-center items-center text-forthColor/40 font-bold h-full gap-3">
-                    <p className="text-3xl">
-                      <SlCloudUpload></SlCloudUpload>
-                    </p>
-                    <p>Select to upload related images </p>
-                  </div>
-                </Label>
-                <Input
-                  id="picture"
-                  type="file"
-                  className="file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 hidden"
-                />
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
-
+        <Button
+          onClick={onOpenPIModal}
+          className="flex items-center gap-2 mr-2 bg-forthColor text-white font-bold"
+        >
+          <IoMdAdd />
+          <span>Create new</span>
+        </Button>
+        <ModalComp
+          modalTitle={"Ajouter une information"}
+          isOpen={isOpenPIModal}
+          size="4xl"
+          onClose={onClosePIModal}
+        >
+          <AddInformationForm />
+        </ModalComp>
         {/* end create new info */}
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter title..."
+          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("title")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
