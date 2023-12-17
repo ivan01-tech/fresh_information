@@ -1,53 +1,3 @@
-export const schoolList = [
-  {
-    short: "short",
-    long: "Faculté des Lettres et Sciences Humaines",
-  },
-  {
-    short: "short",
-    long: "Faculté des Sciences Juridiques et Politiques    ",
-  },
-  {
-    short: "short",
-    long: "Faculté des Sciences    ",
-  },
-
-  {
-    short: "short",
-    long: "Faculté de Medécine et des Sciences Pharmaceutiques    ",
-  },
-  {
-    short: "short",
-    long: "Faculté des Sciences Economiques et de Gestion Appliquée",
-  },
-];
-
-export function generateAcronym(phrase: string): string {
-  // Liste des mots à ignorer
-  const ignoreWords = [
-    "des",
-    "les",
-    "l",
-    "la",
-    "de",
-    "et",
-    "un",
-    "une",
-    "au",
-    "aux",
-  ];
-
-  // Séparez la phrase en mots
-  const words = phrase.split(" ");
-
-  // Obtenez la première lettre de chaque mot (sauf les mots à ignorer)
-  const acronym = words
-    .filter((word) => !ignoreWords.includes(word.toLowerCase()))
-    .map((word) => word[0].toUpperCase())
-    .join("");
-
-  return acronym;
-}
 export const licence = [
   {
     value: "MAS1PHYSIO",
@@ -378,6 +328,7 @@ export const licence = [
     label: "MASTER GEOSCIENCES SOLS ET ENVIRONNEMENTS",
   },
 ];
+
 export const masters = [
   {
     value: "LICBC1",
@@ -586,5 +537,114 @@ export const masters = [
   {
     value: "LICPFON1",
     label: "LICENCE 1 PHYSIQUE FONDAMENTALE",
+  },
+];
+
+export function generateAcronym(phrase: string): string {
+  // Liste des mots à ignorer
+  const ignoreWords = [
+    "des",
+    "les",
+    "l",
+    "la",
+    "de",
+    "et",
+    "un",
+    "une",
+    "au",
+    "aux",
+  ];
+
+  // Séparez la phrase en mots
+  const words = phrase.split(" ");
+
+  // Obtenez la première lettre de chaque mot (sauf les mots à ignorer)
+  const acronym = words
+    .filter(
+      (word) => !ignoreWords.includes(word.toLowerCase()) && Boolean(word)
+    )
+    .map((word) => {
+      console.log(word);
+      const a = word[0].toUpperCase();
+      return a;
+    })
+    .join("");
+
+  return acronym;
+}
+
+// const niveaux = {
+//   faculte,
+//   filiere,
+//   cycle,
+//   niveau,
+// };
+interface Level {
+  value: string;
+  label: string;
+  niveau?: number | null;
+}
+
+function addNiveauProperty(array: Level[]): Level[] {
+  array.forEach((item) => {
+    const niveauMatch = item.value.match(/\d+/); // Trouve le numéro dans la valeur
+    item.niveau = niveauMatch ? parseInt(niveauMatch[0], 10) : null; // Ajoute la propriété "niveau"
+  });
+
+  return [...array];
+}
+
+// Utilisez la fonction pour ajouter la propriété "niveau" à votre tableau
+let N = masters.concat(licence);
+
+// Exemple d'utilisation
+export const levels = addNiveauProperty(N);
+
+export const schoolList = [
+  {
+    long: "Faculté des Lettres et Sciences Humaines",
+    short: function () {
+      return generateAcronym(this.long);
+    },
+  },
+  {
+    long: "Faculté des Sciences Juridiques et Politiques    ",
+    short: function () {
+      return generateAcronym(this.long);
+    },
+  },
+  {
+    long: "Faculté des Sciences",
+    levels,
+    short: function () {
+      return generateAcronym(this.long);
+    },
+  },
+  {
+    long: "Faculté de Medécine et des Sciences Pharmaceutiques    ",
+    short: function () {
+      return generateAcronym(this.long);
+    },
+  },
+  {
+    long: "Faculté des Sciences Economiques et de Gestion Appliquée",
+    short: function () {
+      return generateAcronym(this.long);
+    },
+  },
+];
+
+export const niveaux = [
+  {
+    code: 1,
+    label: "Niveau 1",
+  },
+  {
+    code: 2,
+    label: "Niveau 2",
+  },
+  {
+    code: 3,
+    label: "Niveau 3",
   },
 ];

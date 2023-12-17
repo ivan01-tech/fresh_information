@@ -1,5 +1,5 @@
 import { AiOutlineDelete } from "react-icons/ai";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -16,21 +16,60 @@ import { Textarea } from "../ui/textarea";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import Image from "next/image";
-import { FiDelete } from "react-icons/fi";
-import { LuDelete } from "react-icons/lu";
-import { LucideDelete } from "lucide-react";
+import { levels, niveaux, schoolList } from "@/utils/LevelDetailsList";
 
 type Props = {};
-
+type SchoolAdded = {
+  school: string;
+  filiere: string;
+  niveau: string;
+};
+const initialState = {
+  school: "",
+  filiere: "",
+  niveau: "",
+};
 function AddInformationForm({}: Props) {
   const [images, setImage] = useState<File[]>([]);
-
+  const [currentSchoolAdd, setCurrentSchoolAdd] =
+    useState<SchoolAdded>(initialState);
+  const [schoolAdded, setSchoolAdded] = useState<SchoolAdded[]>([]);
   const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const image = e.target.files && e.target.files[0];
     if (image) {
       setImage((prev) => [...prev, image]);
     }
   };
+  const filterLevelList = useMemo(
+    function () {
+      const levels =
+        schoolList.find((school) => school.short() == currentSchoolAdd.school)
+          ?.levels || [];
+
+      const levelBySchool = levels.filter(
+        (level) => Number(level.niveau) == Number(currentSchoolAdd.niveau)
+      );
+
+      const levelByLevel = levelBySchool.filter(
+        (level) => Number(level.niveau) == Number(currentSchoolAdd.niveau)
+      );
+
+      return levelByLevel;
+    },
+    [currentSchoolAdd]
+  );
+
+  const onAddClassHandler = function () {
+    console.log("currentSchoolAdd : ", currentSchoolAdd);
+    setSchoolAdded((prev) => [...prev, currentSchoolAdd]);
+    setCurrentSchoolAdd(initialState);
+  };
+  console.log(filterLevelList);
+
+  const canAddaaClass =
+    Boolean(currentSchoolAdd.niveau) && Boolean(currentSchoolAdd.school)
+      ? true
+      : false;
 
   return (
     <form action=" " className="flex !h-auto flex-col gap-3 ">
@@ -67,93 +106,131 @@ function AddInformationForm({}: Props) {
       </div>
 
       <div className="grid gap-2 my-2">
-        <p className="my-2">Ajouter une filiere</p>
+        <p className="my-2">Ajouter une classe</p>
         <div className="rounded-md p-3 my-2 border-2 border-gray-200 border-dashed flex flex-wrap">
-          <div className="flex bg-gray-50 p-3 rounded-md justify-center items-center flex-col space-y-2 text-gray-700">
-            <MdWorkspacesOutline className="text-xl opacity-30 text-gray-700" />
-            <p className="text-gray-700 opacity-30 text-xs">
-              {" "}
-              Pas encore d&apos;exole créer{" "}
-            </p>
-          </div>
-          <div className="flex w-full gap-4 space-x-1 max-w-[400px]">
-            <div className="relative w-full group my-4 rounded-md p-3 border-2 border-gray-200 bg-gray-200 bg-opacity-20 text-gray-700 hover:border-gray-400 duration-200">
-              <h1 className="text-md font-bold">INF - L3 dfvdfv</h1>
-              <h1 className="text-xs "> Campus 3</h1>
-              <p className="text-[8px]">dfvdfvdfv</p>
-              <div className="absolute group-hover:translate-x-0 opacity-0 group-hover:opacity-100 -translate-x-16 flex space-x-2 right-2 text-xl top-1 duration-200">
-                <button className="flex justify-center rounded-md items-center w-8 h-8 bg-red-500 bg-opacity-25 text-red-500 border-2 cursor-pointer duration-100 border-red-500 hover:bg-opacity-100 hover:text-white">
-                  <AiOutlineDelete className="text-md hover:scale-105 duration-200 " />
-                </button>
-              </div>
+          {!schoolAdded.length ? (
+            <div className="flex bg-gray-50 p-3 rounded-md justify-center items-center flex-col space-y-2 text-gray-700  w-full">
+              <MdWorkspacesOutline className="text-xl opacity-30 text-gray-700" />
+              <p className="text-gray-700 opacity-30 text-xs">
+                {" "}
+                Pas encore de classe créer{" "}
+              </p>
             </div>
-          </div>
+          ) : (
+            schoolAdded.map((classe, ind) => {
+              const school = schoolList.find(
+                (school) => school.short() == classe.school
+              );
+              const filier = school?.levels?.find(
+                (level) => level.value == classe.filiere
+              );
 
-          <div className="flex w-full space-x-1 max-w-[400px]">
-            <div className="relative w-full group my-4 rounded-md p-3 border-2 border-gray-200 bg-gray-200 bg-opacity-20 text-gray-700 hover:border-gray-400 duration-200">
-              <h1 className="text-md font-bold">INF - L3 dfvdfv</h1>
-              <h1 className="text-xs "> Campus 3</h1>
-              <p className="text-[8px]">dfvdfvdfv</p>
-              <div className="absolute group-hover:translate-x-0 opacity-0 group-hover:opacity-100 -translate-x-16 flex space-x-2 right-2 text-xl top-1 duration-200">
-                <button className="flex justify-center rounded-md items-center w-8 h-8 bg-red-500 bg-opacity-25 text-red-500 border-2 cursor-pointer duration-100 border-red-500 hover:bg-opacity-100 hover:text-white">
-                  <AiOutlineDelete className="text-md hover:scale-105 duration-200 " />
-                </button>
-              </div>
-            </div>
-          </div>
+              return (
+                <div
+                  key={school?.long}
+                  className="flex w-full gap-4 space-x-1 max-w-[400px] items-center justify-center"
+                >
+                  <div className="relative w-full group my-4 rounded-md p-3 border-2 border-gray-200 bg-gray-200 bg-opacity-20 text-gray-700 hover:border-gray-400 duration-200 items-center justify-center">
+                    <h1 className="text-md font-bold">{filier?.label}</h1>
+
+                    <p className="text-[8px]">{school?.long}</p>
+                    <div className="absolute group-hover:translate-x-0 opacity-0 group-hover:opacity-100 -translate-x-16 flex space-x-2 right-2 text-xl top-1 duration-200">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSchoolAdded((prev) =>
+                            prev.filter((s, i) => i !== ind)
+                          );
+                        }}
+                        className="flex justify-center rounded-md items-center w-8 h-8 bg-red-500 bg-opacity-25 text-red-500 border-2 cursor-pointer duration-100 border-red-500 hover:bg-opacity-100 hover:text-white"
+                      >
+                        <AiOutlineDelete className="text-md hover:scale-105 duration-200 " />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
 
         <div className="flex flex-wrap  gap-3">
-          <ChakraSelect placeholder="Choisir une filière/école">
-            <option value="option1">FLASH</option>
-            <option value="option2">FAC SCIENCE</option>
-            <option value="option3">Option 3</option>
-          </ChakraSelect>
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Faculté/Ecole" />
-            </SelectTrigger>
-            <SelectContent className="!w-full hr">
-              <SelectGroup>
-                <SelectLabel>Faculté/Ecole</SelectLabel>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Selectionner un campus" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Filiere</SelectLabel>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Selectionner une filiere" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Niveau</SelectLabel>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <div className="grid gap-2 my-2">
+            <Label htmlFor="">Ajouter une école/faculté :</Label>
+
+            <ChakraSelect
+              onChange={(e) => {
+                console.log("first change : ", e);
+                setCurrentSchoolAdd((prev) => ({
+                  ...prev,
+                  school: e.target.value,
+                }));
+              }}
+              value={currentSchoolAdd.school}
+              placeholder="Choisir une Université"
+            >
+              {schoolList.map((item) => (
+                <option key={item.long} value={item.short()}>
+                  {item.long}
+                </option>
+              ))}
+            </ChakraSelect>
+          </div>
+
+          <div className="grid gap-2 my-2">
+            <Label htmlFor="">ajouter un niveau :</Label>
+
+            <ChakraSelect
+              onChange={(e) => {
+                setCurrentSchoolAdd((prev) => ({
+                  ...prev,
+                  niveau: e.target.value,
+                }));
+                console.log("first change : ", currentSchoolAdd.niveau);
+              }}
+              value={currentSchoolAdd.niveau}
+              placeholder="Choisir un niveau"
+            >
+              {niveaux.map((level) => (
+                <option key={level.label} value={level.code}>
+                  {level.label}
+                </option>
+              ))}
+            </ChakraSelect>
+          </div>
+          <div className="grid gap-2 my-2">
+            <Label htmlFor="">Ajouter filière :</Label>
+            <ChakraSelect
+              disabled={!currentSchoolAdd.school}
+              placeholder="Choisir une filière"
+              value={currentSchoolAdd.filiere}
+              onChange={(e) => {
+                setCurrentSchoolAdd((prev) => ({
+                  ...prev,
+                  filiere: e.target.value,
+                }));
+
+                console.log("current : ", e.target.value, currentSchoolAdd);
+              }}
+            >
+              {filterLevelList &&
+                filterLevelList.map((level) => (
+                  <option key={level.value} value={level.value}>
+                    {level.label}
+                  </option>
+                ))}
+            </ChakraSelect>
+          </div>
+        </div>
+        <div className="grid gap-2 my-2">
+          <Button
+            onClick={onAddClassHandler}
+            disabled={!Boolean(currentSchoolAdd.filiere)}
+            className={`w-max `}
+            type="button"
+          >
+            Ajouter la classe
+          </Button>
         </div>
       </div>
 
