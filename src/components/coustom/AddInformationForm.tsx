@@ -1,14 +1,6 @@
 import { AiOutlineDelete } from "react-icons/ai";
 import React, { useMemo, useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Select as ChakraSelect } from "@chakra-ui/react";
 import { MdDelete, MdWorkspacesOutline } from "react-icons/md";
 import { Label } from "../ui/label";
@@ -17,6 +9,12 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { levels, niveaux, schoolList } from "@/utils/LevelDetailsList";
+import { useForm } from "react-hook-form";
+import {
+  InformationCreationSchema,
+  InformationCreationType,
+} from "@/model/Information";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type Props = {};
 type SchoolAdded = {
@@ -30,16 +28,28 @@ const initialState = {
   niveau: "",
 };
 function AddInformationForm({}: Props) {
+  const {
+    register,
+    handleSubmit,
+    trigger,
+    formState: { errors },
+  } = useForm<InformationCreationType>({
+    resolver: zodResolver(InformationCreationSchema),
+  });
+
   const [images, setImage] = useState<File[]>([]);
   const [currentSchoolAdd, setCurrentSchoolAdd] =
     useState<SchoolAdded>(initialState);
   const [schoolAdded, setSchoolAdded] = useState<SchoolAdded[]>([]);
+
+  //
   const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const image = e.target.files && e.target.files[0];
     if (image) {
       setImage((prev) => [...prev, image]);
     }
   };
+  //
   const filterLevelList = useMemo(
     function () {
       const levels =
@@ -71,43 +81,49 @@ function AddInformationForm({}: Props) {
       ? true
       : false;
 
+  const handleAddInformations = (data: InformationCreationType) => {};
+
   return (
-    <form action=" " className="flex !h-auto flex-col gap-3 ">
+    <form
+      action=" "
+      className="flex !h-auto flex-col gap-3 "
+      onSubmit={handleSubmit(handleAddInformations)}
+    >
       <div className="grid gap-2 my-2">
         <Label htmlFor="email">
-          Title <span className="text-red-500 text-[.7rem]">*</span>
+          Title <span className="text-red-500 text-[.5rem]">*</span>
         </Label>
 
         <Input
-          // {...register("email", { required: true })}
-          id="email"
+          {...register("title", { required: true })}
           className="!p-0 h-8 focus:outline-none"
-          type="email"
+          type="text"
           placeholder=""
         />
-        {/* {errors.email && (
-            <p className="text-red-500 text-[.7rem]">
-              {errors.email.message}
-            </p>
-          )} */}
+        {errors.title && (
+          <p className="text-red-500 text-[.5rem]">{errors.title.message}</p>
+        )}
       </div>
 
       <div className="grid gap-2 my-2">
         <Label htmlFor="description">
-          Description <span className="text-red-500 text-[.7rem]">*</span>
+          Description <span className="text-red-500 text-[.5rem]">*</span>
         </Label>
 
-        <Textarea id="description" />
-        {/* {errors.email && (
-            <p className="text-red-500 text-[.7rem]">
-              {errors.email.message}
-            </p>
-          )} */}
+        <Textarea
+          id="description"
+          {...register("description", { required: true })}
+        />
+        {errors.description && (
+          <p className="text-red-500 text-[.5rem]">
+            {errors.description.message}
+          </p>
+        )}
       </div>
 
       <div className="grid gap-2 my-2">
         <p className="my-2">Ajouter une classe</p>
-        <div className="rounded-md p-3 my-2 border-2 border-gray-200 border-dashed flex flex-wrap">
+        <div className="rounded-md gap-2 p-3 my-2 border-2 border-gray-200 border-dashed flex flex-wrap">
           {!schoolAdded.length ? (
             <div className="flex bg-gray-50 p-3 rounded-md justify-center items-center flex-col space-y-2 text-gray-700  w-full">
               <MdWorkspacesOutline className="text-xl opacity-30 text-gray-700" />
@@ -160,7 +176,6 @@ function AddInformationForm({}: Props) {
 
             <ChakraSelect
               onChange={(e) => {
-                console.log("first change : ", e);
                 setCurrentSchoolAdd((prev) => ({
                   ...prev,
                   school: e.target.value,
@@ -367,7 +382,7 @@ function AddInformationForm({}: Props) {
                   >
                     <path
                       className="pointer-events-none"
-                      d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.316c0 .901.73 2 1.631 2h5.711z"
+                      d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.511c.9 0 1.631-1.099 1.631-2h5.316c0 .901.53 2 1.631 2h5.511z"
                     />
                   </svg>
                 </button>
@@ -413,7 +428,7 @@ function AddInformationForm({}: Props) {
                   >
                     <path
                       className="pointer-events-none"
-                      d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.316c0 .901.73 2 1.631 2h5.711z"
+                      d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.511c.9 0 1.631-1.099 1.631-2h5.316c0 .901.53 2 1.631 2h5.511z"
                     />
                   </svg>
                 </button>

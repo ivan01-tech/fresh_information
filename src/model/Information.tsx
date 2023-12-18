@@ -1,3 +1,4 @@
+import { z } from "zod";
 export interface InformationCreation {
   id: string;
   title: string;
@@ -8,6 +9,26 @@ export interface InformationCreation {
   updated_at: string;
   status: "Active" | "Unvalid" | "Pending";
 }
+
+export const InformationCreationSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(5, { message: "Le titre doit contenir au entre 5 et 230 caractères" })
+    .max(230, {
+      message: "Le titre doit contenir au entre 5 et 230 caractères",
+    }),
+  description: z
+    .string()
+    .trim()
+    .min(5, {
+      message: "La description doit contenir au minimum 5 caractères.",
+    })
+    .max(5000),
+});
+
+export type InformationCreationType = z.infer<typeof InformationCreationSchema>;
+
 const generateRandomString = () => {
   return Math.random().toString(36).substring(7);
 };
@@ -52,6 +73,7 @@ export const generateObjects = (count: number): InformationCreation[] => {
   }
   return objects;
 };
+
 export const generatedRandomObject: InformationCreation[] = [
   {
     id: "182bc",
