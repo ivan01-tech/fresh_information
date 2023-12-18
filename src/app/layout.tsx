@@ -1,13 +1,11 @@
 "use client";
-import { Inter } from "next/font/google";
 import "../app/globals.css";
 import useToggle from "@/hooks/useToggle";
 import { SidebarLink } from "@/components/Dasbord";
 import { usePathname } from "next/navigation";
 import NextTopLoader from "nextjs-toploader";
 import { ChakraProvider } from "@chakra-ui/react";
-const inter = Inter({ subsets: ["latin"] });
-
+import { Toaster } from "react-hot-toast";
 export default function RootLayout({
   children,
 }: {
@@ -16,7 +14,6 @@ export default function RootLayout({
   // Mobile sidebar visibility state
   const router = usePathname();
   const [showSidebar, setShowSidebar] = useToggle(false);
-  console.log("passed", showSidebar, setShowSidebar);
 
   const title = SidebarLink.find((prev) => prev.path == router)?.title;
 
@@ -26,9 +23,9 @@ export default function RootLayout({
         color="rgb(255, 108, 34)"
         initialPosition={0.08}
         crawlSpeed={200}
-        height={3}
+        height={10}
         crawl={true}
-        showSpinner={true}
+        // showSpinner={true}
         easing="ease"
         speed={400}
         shadow="0 0 10px #2299DD,0 0 5px #2299DD"
@@ -37,8 +34,9 @@ export default function RootLayout({
         zIndex={1600}
         showAtBottom={false}
       />
-      <body className={inter.className + "bg-slate-100  "}>
+      <body className={"bg-slate-100  "}>
         <ChakraProvider>{children}</ChakraProvider>
+        <Toaster />
       </body>
     </html>
   );

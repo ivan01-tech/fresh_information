@@ -1,3 +1,4 @@
+// / <reference types="firebase" />
 import { AiOutlineDelete } from "react-icons/ai";
 import React, { useMemo, useState } from "react";
 
@@ -8,13 +9,23 @@ import { Textarea } from "../ui/textarea";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import Image from "next/image";
-import { levels, niveaux, schoolList } from "@/utils/LevelDetailsList";
+import { niveaux, schoolList } from "@/utils/LevelDetailsList";
 import { useForm } from "react-hook-form";
 import {
   InformationCreationSchema,
   InformationCreationType,
 } from "@/model/Information";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  UploadTask,
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+  uploadBytesResumable,
+} from "firebase/storage";
+import app from "../../../firebase";
+import { toast } from "react-hot-toast";
 
 type Props = {};
 type SchoolAdded = {
@@ -36,8 +47,9 @@ function AddInformationForm({}: Props) {
   } = useForm<InformationCreationType>({
     resolver: zodResolver(InformationCreationSchema),
   });
-
+  const [error, setError] = useState<string | null>(null);
   const [images, setImage] = useState<File[]>([]);
+  const [imagesUrl, setImageUrl] = useState<string[]>([]);
   const [currentSchoolAdd, setCurrentSchoolAdd] =
     useState<SchoolAdded>(initialState);
   const [schoolAdded, setSchoolAdded] = useState<SchoolAdded[]>([]);
@@ -80,9 +92,43 @@ function AddInformationForm({}: Props) {
     Boolean(currentSchoolAdd.niveau) && Boolean(currentSchoolAdd.school)
       ? true
       : false;
+  // to ipload images on firestore
+  const handleUplaodeImage = async () => {
+    if (images.length === 0) {
+      setError("Veuillez choisir au moins un fichier");
+      return;
+    }
 
-  const handleAddInformations = (data: InformationCreationType) => {};
+    const uploadPromises = images.map(async (file) => {
+      const storage = getStorage(app);
+      const storageRef = ref(storage, "images/" + file.name);
+      return uploadBytesResumable(storageRef, file);
+    });
 
+    try {
+      const uploadSnapshots = await Promise.all(uploadPromises);
+
+      const urlsArr = uploadSnapshots.map(async (file) => {
+        return getDownloadURL(file.ref);
+      });
+
+      const downloadURLs = await Promise.all(urlsArr);
+
+      setError(null);
+      setImage([]);
+
+      console.log("download url: ", downloadURLs);
+      toast.success("Les images ont bien été uploader");
+      setImageUrl((prev) => [...downloadURLs, ...prev]);
+    } catch (error) {
+      setError(`Erreur lors de l'upload `);
+      toast.error("Une erreur s'est produite lors de l'ajout des images");
+      console.log("error uploading: ", error);
+    }
+  };
+
+  const handleAddInformations = async (data: InformationCreationType) => {};
+  const uploadBtnMustBeDisabled = images.length <= 0;
   return (
     <form
       action=" "
@@ -276,10 +322,12 @@ function AddInformationForm({}: Props) {
                   Choisir une image
                 </p>
               </label>
-
               <h1 className="pt-8 pb-3 font-semibold sm:text-lg text-gray-900">
                 Images à uploader
               </h1>
+              {error && (
+                <p className="my-2 text-red-500 text-[.8rem]">{error}</p>
+              )}
 
               <ul id="gallery" className="flex flex-1 flex-wrap -m-1">
                 {images.length > 0 ? (
@@ -320,14 +368,32 @@ function AddInformationForm({}: Props) {
                     </span>
                   </li>
                 )}
+
+                {imagesUrl.map((image, ind) => (
+                  <div key={image} className="relative">
+                    <Image width={100} height={100} src={image} alt="" />
+                    <button
+                      onClick={() => {
+                        // TODO comme here
+                      }}
+                      className="absolute p-1 top-0 left-0 m-2 text-white bg-red-600 rounded"
+                    >
+                      <MdDelete></MdDelete>
+                    </button>
+                  </div>
+                ))}
               </ul>
             </section>
 
             {/* <!-- sticky footer --> */}
             <footer className="flex justify-end px-8 pb-8 pt-4">
               <button
-                id="submit"
-                className="rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none"
+                type="button"
+                disabled={uploadBtnMustBeDisabled}
+                onClick={handleUplaodeImage}
+                className={`rounded-sm px-3 py-1 bg-blue-700  hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none ${
+                  uploadBtnMustBeDisabled ? "!bg-gray-400" : ""
+                }`}
               >
                 Uploader Maintenant
               </button>
@@ -471,3 +537,16 @@ function AddInformationForm({}: Props) {
 }
 
 export default AddInformationForm;
+
+/**
+ Exercice 2.2.9. Soit S ∼ Geo(p) et T ∼ Geo(q) deux variables indépendantes. On cherche
+la loi de Z = min(S, T ).
+1. Pour k ∈ N∗ , calculer P(S ≥ k).
+2. En déduire P(Z ≥ k).
+3. Quelle est la loi de Z ?
+4. Retrouver ce résultat en raisonnant en termes de temps de premier succès.
+
+
+soit X uen variable aleatoire geometrique de parametre p , on defint  la v.a Y par Y=X/2 si X est pair et 0 sinon
+donner la valeur de Y pour X=1 et X=3
+ */
