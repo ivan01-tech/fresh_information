@@ -48,6 +48,7 @@ function AddInformationForm({}: Props) {
     resolver: zodResolver(InformationCreationSchema),
   });
   const [error, setError] = useState<string | null>(null);
+  const [Loading, setLoading] = useState<boolean>(false);
   const [images, setImage] = useState<File[]>([]);
   const [imagesUrl, setImageUrl] = useState<string[]>([]);
   const [currentSchoolAdd, setCurrentSchoolAdd] =
@@ -99,6 +100,8 @@ function AddInformationForm({}: Props) {
       return;
     }
 
+    setLoading(true);
+
     const uploadPromises = images.map(async (file) => {
       const storage = getStorage(app);
       const storageRef = ref(storage, "images/" + file.name);
@@ -117,13 +120,14 @@ function AddInformationForm({}: Props) {
       setError(null);
       setImage([]);
 
-      console.log("download url: ", downloadURLs);
       toast.success("Les images ont bien été uploader");
       setImageUrl((prev) => [...downloadURLs, ...prev]);
     } catch (error) {
       setError(`Erreur lors de l'upload `);
       toast.error("Une erreur s'est produite lors de l'ajout des images");
       console.log("error uploading: ", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -169,7 +173,7 @@ function AddInformationForm({}: Props) {
 
       <div className="grid gap-2 my-2">
         <p className="my-2">Ajouter une classe</p>
-        <div className="rounded-md gap-2 p-3 my-2 border-2 border-gray-200 border-dashed flex flex-wrap">
+        <div className="rounded-md !gap-2 p-3 my-2 border-2 border-gray-200 border-dashed flex flex-wrap">
           {!schoolAdded.length ? (
             <div className="flex bg-gray-50 p-3 rounded-md justify-center items-center flex-col space-y-2 text-gray-700  w-full">
               <MdWorkspacesOutline className="text-xl opacity-30 text-gray-700" />
@@ -190,7 +194,7 @@ function AddInformationForm({}: Props) {
               return (
                 <div
                   key={school?.long}
-                  className="flex w-full gap-4 space-x-1 max-w-[400px] items-center justify-center"
+                  className="flex w-full gap-4 space-x-1 m-1 max-w-[400px] items-center justify-center"
                 >
                   <div className="relative w-full group my-4 rounded-md p-3 border-2 border-gray-200 bg-gray-200 bg-opacity-20 text-gray-700 hover:border-gray-400 duration-200 items-center justify-center">
                     <h1 className="text-md font-bold">{filier?.label}</h1>
@@ -368,10 +372,14 @@ function AddInformationForm({}: Props) {
                     </span>
                   </li>
                 )}
-
+              </ul>
+              <h1 className="pt-8 pb-3 font-semibold sm:text-lg text-gray-900">
+                Images déjà disponible
+              </h1>
+              <ul id="gallery" className="flex flex-1 flex-wrap -m-1">
                 {imagesUrl.map((image, ind) => (
                   <div key={image} className="relative">
-                    <Image width={100} height={100} src={image} alt="" />
+                    <img width={100} height={100} src={image} alt="" />
                     <button
                       onClick={() => {
                         // TODO comme here
@@ -389,13 +397,13 @@ function AddInformationForm({}: Props) {
             <footer className="flex justify-end px-8 pb-8 pt-4">
               <button
                 type="button"
-                disabled={uploadBtnMustBeDisabled}
+                disabled={uploadBtnMustBeDisabled || Loading}
                 onClick={handleUplaodeImage}
                 className={`rounded-sm px-3 py-1 bg-blue-700  hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none ${
                   uploadBtnMustBeDisabled ? "!bg-gray-400" : ""
                 }`}
               >
-                Uploader Maintenant
+                {Loading ? "Operation en cours..." : "Uploader Maintenant"}
               </button>
               <button
                 id="cancel"
