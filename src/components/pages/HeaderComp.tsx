@@ -25,7 +25,7 @@ function Navbar() {
   };
   return (
     <div className="container fixed  top-0 left-0 right-0 h-auto m-auto p-3 flex justify-between items-center">
-      <h1 className="font-xl font-bold text-sky-800">CampusExplorer</h1>
+      <h1 className="font-xl font-bold text-white text-2xl">CampusExplorer</h1>
       <SearchBar></SearchBar>
       <nav className={isOpen ? "flex " : " hidden md:flex "}>
         <ul className="flex md:bg-inherit bg-white  absolute md:relative flex-col md:flex-row w-full shadow md:shadow-none text-center top-16 left-0 md:top-0  md:flex">
