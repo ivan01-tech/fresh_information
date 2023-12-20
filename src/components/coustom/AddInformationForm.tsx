@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 // / <reference types="firebase" />
 import { AiOutlineDelete } from "react-icons/ai";
 import React, { useMemo, useState } from "react";

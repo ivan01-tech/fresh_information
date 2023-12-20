@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import NextTopLoader from "nextjs-toploader";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Toaster } from "react-hot-toast";
+import Header from "@/components/pages/Header";
+import Navbar from "@/components/pages/HeaderComp";
 export default function RootLayout({
   children,
 }: {
@@ -35,7 +37,12 @@ export default function RootLayout({
         showAtBottom={false}
       />
       <body className={"bg-slate-100  "}>
-        <ChakraProvider>{children}</ChakraProvider>
+        <ChakraProvider>
+          <Navbar></Navbar>
+          {/* <Header></Header> */}
+
+          {children}
+        </ChakraProvider>
         <Toaster />
       </body>
     </html>
