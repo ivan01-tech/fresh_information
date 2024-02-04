@@ -4,9 +4,9 @@ import SearchBar from "../coustom/SearchComp";
 import { IoMenuSharp } from "react-icons/io5";
 import Link from "next/link";
 
-const people = ["Contacts", "A Propos"];
+export const people = ["Contact", "A Propos"];
 
-const listItems = people.map((person) => (
+export const listItems = people.map((person) => (
   <li key={person} className=" cursor-pointer rounded">
     <Link
       href="#"

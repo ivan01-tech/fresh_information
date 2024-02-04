@@ -6,8 +6,10 @@ import { usePathname } from "next/navigation";
 import NextTopLoader from "nextjs-toploader";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Toaster } from "react-hot-toast";
-import Header from "@/components/pages/Header";
-import Navbar from "@/components/pages/HeaderComp";
+import Header from "@/components/pages/Nav3";
+
+import Footer from "@/components/pages/Footer";
+
 export default function RootLayout({
   children,
 }: {
@@ -18,6 +20,9 @@ export default function RootLayout({
   const [showSidebar, setShowSidebar] = useToggle(false);
 
   const title = SidebarLink.find((prev) => prev.path == router)?.title;
+  const pathnam = usePathname();
+
+  const cantShowHeader = !["/sign-up", "/log-in"].includes(pathnam);
 
   return (
     <html lang="en">
@@ -36,12 +41,14 @@ export default function RootLayout({
         zIndex={1600}
         showAtBottom={false}
       />
-      <body className={"bg-slate-100  "}>
+      <body className={"bg-slate-50  "}>
         <ChakraProvider>
-          <Navbar></Navbar>
+          {cantShowHeader && <Header></Header>}
           {/* <Header></Header> */}
 
           {children}
+
+          {cantShowHeader && <Footer />}
         </ChakraProvider>
         <Toaster />
       </body>

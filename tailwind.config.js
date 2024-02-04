@@ -56,6 +56,7 @@ module.exports = {
         white: "#ffffff",
         secondary: "#FFD099",
         primary: "#FF9209",
+        violet: "#05ABE",
         thirdColor: "#FF6C22",
         forthColor: "#2B3499",
         silver: "#ecebff",

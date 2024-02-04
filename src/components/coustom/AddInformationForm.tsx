@@ -2,7 +2,6 @@
 // / <reference types="firebase" />
 import { AiOutlineDelete } from "react-icons/ai";
 import React, { useMemo, useState } from "react";
-
 import { Select as ChakraSelect } from "@chakra-ui/react";
 import { MdDelete, MdWorkspacesOutline } from "react-icons/md";
 import { Label } from "../ui/label";
@@ -18,28 +17,29 @@ import {
 } from "@/model/Information";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  UploadTask,
   getDownloadURL,
   getStorage,
   ref,
-  uploadBytes,
   uploadBytesResumable,
 } from "firebase/storage";
 import app from "../../../firebase";
 import { toast } from "react-hot-toast";
 
 type Props = {};
+
 type SchoolAdded = {
   school: string;
   filiere: string;
   niveau: string;
 };
+// initial state to add and information
 const initialState = {
   school: "",
   filiere: "",
   niveau: "",
 };
 function AddInformationForm({}: Props) {
+  // Destructuring properties from react-hook-form
   const {
     register,
     handleSubmit,
@@ -48,54 +48,64 @@ function AddInformationForm({}: Props) {
   } = useForm<InformationCreationType>({
     resolver: zodResolver(InformationCreationSchema),
   });
+
+  // State for handling errors and loading state
   const [error, setError] = useState<string | null>(null);
   const [Loading, setLoading] = useState<boolean>(false);
+
+  // State for managing image files and URLs
   const [images, setImage] = useState<File[]>([]);
   const [imagesUrl, setImageUrl] = useState<string[]>([]);
+
+  // State for the current school information being added
   const [currentSchoolAdd, setCurrentSchoolAdd] =
     useState<SchoolAdded>(initialState);
+
+  // State for storing the list of added schools
   const [schoolAdded, setSchoolAdded] = useState<SchoolAdded[]>([]);
 
-  //
+  // Event handler for adding an image
   const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const image = e.target.files && e.target.files[0];
     if (image) {
       setImage((prev) => [...prev, image]);
     }
   };
-  //
-  const filterLevelList = useMemo(
-    function () {
-      const levels =
-        schoolList.find((school) => school.short() == currentSchoolAdd.school)
-          ?.levels || [];
 
-      const levelBySchool = levels.filter(
-        (level) => Number(level.niveau) == Number(currentSchoolAdd.niveau)
-      );
+  // Memoized function for filtering the list of levels based on the selected school
+  const filterLevelList = useMemo(() => {
+    const levels =
+      schoolList.find((school) => school.short() == currentSchoolAdd.school)
+        ?.levels || [];
 
-      const levelByLevel = levelBySchool.filter(
-        (level) => Number(level.niveau) == Number(currentSchoolAdd.niveau)
-      );
+    const levelBySchool = levels.filter(
+      (level) => Number(level.niveau) == Number(currentSchoolAdd.niveau)
+    );
 
-      return levelByLevel;
-    },
-    [currentSchoolAdd]
-  );
+    const levelByLevel = levelBySchool.filter(
+      (level) => Number(level.niveau) == Number(currentSchoolAdd.niveau)
+    );
 
-  const onAddClassHandler = function () {
+    return levelByLevel;
+  }, [currentSchoolAdd]);
+
+  // Event handler for adding a class to the list
+  const onAddClassHandler = () => {
     console.log("currentSchoolAdd : ", currentSchoolAdd);
     setSchoolAdded((prev) => [...prev, currentSchoolAdd]);
     setCurrentSchoolAdd(initialState);
   };
   console.log(filterLevelList);
 
+  // Check if a class can be added based on selected school and level
   const canAddaaClass =
     Boolean(currentSchoolAdd.niveau) && Boolean(currentSchoolAdd.school)
       ? true
       : false;
-  // to ipload images on firestore
+
+  // Event handler for uploading images to Firestore
   const handleUplaodeImage = async () => {
+    // Check if images are selected
     if (images.length === 0) {
       setError("Veuillez choisir au moins un fichier");
       return;
@@ -103,6 +113,7 @@ function AddInformationForm({}: Props) {
 
     setLoading(true);
 
+    // Upload each image
     const uploadPromises = images.map(async (file) => {
       const storage = getStorage(app);
       const storageRef = ref(storage, "images/" + file.name);
@@ -110,17 +121,20 @@ function AddInformationForm({}: Props) {
     });
 
     try {
+      // Wait for all uploads to complete
       const uploadSnapshots = await Promise.all(uploadPromises);
 
+      // Get download URLs for the uploaded images
       const urlsArr = uploadSnapshots.map(async (file) => {
         return getDownloadURL(file.ref);
       });
 
+      // Wait for all URLs to be retrieved
       const downloadURLs = await Promise.all(urlsArr);
 
+      // Reset error, clear image selection, and update image URLs
       setError(null);
       setImage([]);
-
       toast.success("Les images ont bien été uploader");
       setImageUrl((prev) => [...downloadURLs, ...prev]);
     } catch (error) {
@@ -132,8 +146,15 @@ function AddInformationForm({}: Props) {
     }
   };
 
-  const handleAddInformations = async (data: InformationCreationType) => {};
+  // Event handler for adding information (to be implemented)
+  const handleAddInformations = async (data: InformationCreationType) => {
+    // TODO: Implement the logic for adding information
+  };
+
+  // Check if the upload button should be disabled
   const uploadBtnMustBeDisabled = images.length <= 0;
+
+  // Render the form
   return (
     <form
       action=" "
@@ -142,7 +163,7 @@ function AddInformationForm({}: Props) {
     >
       <div className="grid gap-2 my-2">
         <Label htmlFor="email">
-          Title <span className="text-red-500 text-[.5rem]">*</span>
+          Titre <span className="text-red-500 text-[.5rem]">*</span>
         </Label>
 
         <Input
@@ -156,7 +177,7 @@ function AddInformationForm({}: Props) {
         )}
       </div>
 
-      <div className="grid gap-2 my-2">
+      <div className="grid gap-2 my-2 ">
         <Label htmlFor="description">
           Description <span className="text-red-500 text-[.5rem]">*</span>
         </Label>
@@ -172,7 +193,7 @@ function AddInformationForm({}: Props) {
         )}
       </div>
 
-      <div className="grid gap-2 my-2">
+      <div className={`   grid gap-2 my-2`}>
         <p className="my-2">Ajouter une classe</p>
         <div className="rounded-md !gap-2 p-3 my-2 border-2 border-gray-200 border-dashed flex flex-wrap">
           {!schoolAdded.length ? (
@@ -393,7 +414,97 @@ function AddInformationForm({}: Props) {
                 ))}
               </ul>
             </section>
+            {/* <!-- using two similar templates for simplicity in js code --> */}
+            <template id="file-template">
+              <li className="block p-1 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/8 h-24">
+                <article className="group w-full h-full rounded-md focus:outline-none focus:shadow-outline elative bg-gray-100 cursor-pointer relative shadow-sm">
+                  <img
+                    alt="upload preview"
+                    className="img-preview hidden w-full h-full sticky object-cover rounded-md bg-fixed"
+                  />
 
+                  <section className="flex flex-col rounded-md text-xs break-words w-full h-full z-20 absolute top-0 py-2 px-3">
+                    <h1 className="flex-1 group-hover:text-blue-800"></h1>
+                    <div className="flex">
+                      <span className="p-1 text-blue-800">
+                        <i>
+                          <svg
+                            className="fill-current w-4 h-4 ml-auto pt-1"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M15 2v5h5v15h-16v-20h11zm1-2h-14v24h20v-18l-6-6z" />
+                          </svg>
+                        </i>
+                      </span>
+                      <p className="p-1 size text-xs text-gray-700"></p>
+                      <button className="delete ml-auto focus:outline-none hover:bg-gray-300 p-1 rounded-md text-gray-800">
+                        <svg
+                          className="pointer-events-none fill-current w-4 h-4 ml-auto"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            className="pointer-events-none"
+                            d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.511c.9 0 1.631-1.099 1.631-2h5.316c0 .901.53 2 1.631 2h5.511z"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </section>
+                </article>
+              </li>
+            </template>
+
+            <template id="image-template">
+              <li className="block p-1 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/8 h-24">
+                <article className="group hasImage w-full h-full rounded-md focus:outline-none focus:shadow-outline bg-gray-100 cursor-pointer relative text-transparent hover:text-white shadow-sm">
+                  <img
+                    alt="upload preview"
+                    className="img-preview w-full h-full sticky object-cover rounded-md bg-fixed"
+                  />
+
+                  <section className="flex flex-col rounded-md text-xs break-words w-full h-full z-20 absolute top-0 py-2 px-3">
+                    <h1 className="flex-1"></h1>
+                    <div className="flex">
+                      <span className="p-1">
+                        <i>
+                          <svg
+                            className="fill-current w-4 h-4 ml-auto pt-"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M5 8.5c0-.828.672-1.5 1.5-1.5s1.5.672 1.5 1.5c0 .829-.672 1.5-1.5 1.5s-1.5-.671-1.5-1.5zm9 .5l-2.519 4-2.481-1.96-4 5.96h14l-5-8zm8-4v14h-20v-14h20zm2-2h-24v18h24v-18z" />
+                          </svg>
+                        </i>
+                      </span>
+
+                      <p className="p-1 size text-xs"></p>
+                      <button className="delete ml-auto focus:outline-none hover:bg-gray-300 p-1 rounded-md">
+                        <svg
+                          className="pointer-events-none fill-current w-4 h-4 ml-auto"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            className="pointer-events-none"
+                            d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.511c.9 0 1.631-1.099 1.631-2h5.316c0 .901.53 2 1.631 2h5.511z"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </section>
+                </article>
+              </li>
+            </template>
             {/* <!-- sticky footer --> */}
             <footer className="flex justify-end px-8 pb-8 pt-4">
               <button
@@ -421,98 +532,6 @@ function AddInformationForm({}: Props) {
         </div>
       </div>
 
-      {/* <!-- using two similar templates for simplicity in js code --> */}
-      <template id="file-template">
-        <li className="block p-1 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/8 h-24">
-          <article className="group w-full h-full rounded-md focus:outline-none focus:shadow-outline elative bg-gray-100 cursor-pointer relative shadow-sm">
-            <img
-              alt="upload preview"
-              className="img-preview hidden w-full h-full sticky object-cover rounded-md bg-fixed"
-            />
-
-            <section className="flex flex-col rounded-md text-xs break-words w-full h-full z-20 absolute top-0 py-2 px-3">
-              <h1 className="flex-1 group-hover:text-blue-800"></h1>
-              <div className="flex">
-                <span className="p-1 text-blue-800">
-                  <i>
-                    <svg
-                      className="fill-current w-4 h-4 ml-auto pt-1"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M15 2v5h5v15h-16v-20h11zm1-2h-14v24h20v-18l-6-6z" />
-                    </svg>
-                  </i>
-                </span>
-                <p className="p-1 size text-xs text-gray-700"></p>
-                <button className="delete ml-auto focus:outline-none hover:bg-gray-300 p-1 rounded-md text-gray-800">
-                  <svg
-                    className="pointer-events-none fill-current w-4 h-4 ml-auto"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      className="pointer-events-none"
-                      d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.511c.9 0 1.631-1.099 1.631-2h5.316c0 .901.53 2 1.631 2h5.511z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </section>
-          </article>
-        </li>
-      </template>
-
-      <template id="image-template">
-        <li className="block p-1 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/8 h-24">
-          <article className="group hasImage w-full h-full rounded-md focus:outline-none focus:shadow-outline bg-gray-100 cursor-pointer relative text-transparent hover:text-white shadow-sm">
-            <img
-              alt="upload preview"
-              className="img-preview w-full h-full sticky object-cover rounded-md bg-fixed"
-            />
-
-            <section className="flex flex-col rounded-md text-xs break-words w-full h-full z-20 absolute top-0 py-2 px-3">
-              <h1 className="flex-1"></h1>
-              <div className="flex">
-                <span className="p-1">
-                  <i>
-                    <svg
-                      className="fill-current w-4 h-4 ml-auto pt-"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M5 8.5c0-.828.672-1.5 1.5-1.5s1.5.672 1.5 1.5c0 .829-.672 1.5-1.5 1.5s-1.5-.671-1.5-1.5zm9 .5l-2.519 4-2.481-1.96-4 5.96h14l-5-8zm8-4v14h-20v-14h20zm2-2h-24v18h24v-18z" />
-                    </svg>
-                  </i>
-                </span>
-
-                <p className="p-1 size text-xs"></p>
-                <button className="delete ml-auto focus:outline-none hover:bg-gray-300 p-1 rounded-md">
-                  <svg
-                    className="pointer-events-none fill-current w-4 h-4 ml-auto"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      className="pointer-events-none"
-                      d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.511c.9 0 1.631-1.099 1.631-2h5.316c0 .901.53 2 1.631 2h5.511z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </section>
-          </article>
-        </li>
-      </template>
-
       <Button
         className="w-[80%] m-auto mt-4 mb-4 bg-green-700 text-white"
         type="submit"
@@ -520,42 +539,8 @@ function AddInformationForm({}: Props) {
         {" "}
         Enregistrer l&apos;information
       </Button>
-
-      {/* <div className="grid  w-full lg:max-w-sm items-center gap-1.5">
-        <Label
-          className="w-full h-[250px] border-[2px] border-forthColor rounded-md !border-dashed"
-          htmlFor="picture"
-        >
-          <div className="w-full flex flex-col justify-center items-center text-forthColor/40 font-bold h-full gap-3">
-            <p className="text-3xl">
-              <SlCloudUpload></SlCloudUpload>
-            </p>
-            <p>
-              clicquer pour importer une image relatif à l&apos;information{" "}
-            </p>
-          </div>
-        </Label>
-        <Input
-          id="picture"
-          type="file"
-          className="file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 hidden"
-        />
-      </div> */}
     </form>
   );
 }
 
 export default AddInformationForm;
-
-/**
- Exercice 2.2.9. Soit S ∼ Geo(p) et T ∼ Geo(q) deux variables indépendantes. On cherche
-la loi de Z = min(S, T ).
-1. Pour k ∈ N∗ , calculer P(S ≥ k).
-2. En déduire P(Z ≥ k).
-3. Quelle est la loi de Z ?
-4. Retrouver ce résultat en raisonnant en termes de temps de premier succès.
-
-
-soit X uen variable aleatoire geometrique de parametre p , on defint  la v.a Y par Y=X/2 si X est pair et 0 sinon
-donner la valeur de Y pour X=1 et X=3
- */

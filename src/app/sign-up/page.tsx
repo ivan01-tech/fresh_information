@@ -36,7 +36,20 @@ export default function SingUpAccount() {
 
   return (
     <>
-      <div className="custom-shape-divider-top-1702328740">
+      <div className="min-h-screen flex">
+        <div className="w-1/2 bg-forthColor hidden  text-white p-12 md:flex flex-col justify-between">
+          <div>
+            <h1 className="text-4xl font-bold mt-2">Digital Campus</h1>
+          </div>
+          <div>
+            <p className="text-lg italic">
+              This library has saved me countless hours of work and helped me
+              deliver stunning designs to my clients faster than ever before.
+            </p>
+            <p className="text-lg font-semibold mt-4">Sofia Davis</p>
+          </div>
+        </div>
+        {/* <div className="custom-shape-divider-top-1702328740">
         <svg
           data-name="Layer 1"
           xmlns="http://www.w3.org/2000/svg"
@@ -48,10 +61,10 @@ export default function SingUpAccount() {
             className="shape-fill"
           ></path>
         </svg>
-      </div>
-      <div className="relative flex flex-col justify-center items-center min-h-screen overflow-hidden">
+      </div> */}
+        {/* <div className="relative flex flex-col justify-center items-center min-h-screen overflow-hidden"> */}
         <form
-          className="w-full m-auto bg-white lg:max-w-lg"
+          className="w-full m-auto bg-white lg:max-w-lg mx-4"
           onSubmit={handleSubmit(onSubmit)}
         >
           <Card>
@@ -118,6 +131,48 @@ export default function SingUpAccount() {
           </Card>
         </form>
       </div>
+      {/* </div> */}
     </>
+  );
+}
+
+function ChromeIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <circle cx="12" cy="12" r="4" />
+      <line x1="21.17" x2="12" y1="8" y2="8" />
+      <line x1="3.95" x2="8.54" y1="6.06" y2="14" />
+      <line x1="10.88" x2="15.46" y1="21.94" y2="14" />
+    </svg>
+  );
+}
+
+function FlagIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+      <line x1="4" x2="4" y1="22" y2="15" />
+    </svg>
   );
 }

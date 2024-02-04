@@ -1,0 +1,78 @@
+/**
+ Exercice 2.2.9. Soit S ∼ Geo(p) et T ∼ Geo(q) deux variables indépendantes. On cherche
+la loi de Z = min(S, T ).
+1. Pour k ∈ N∗ , calculer P(S ≥ k).
+2. En déduire P(Z ≥ k).
+3. Quelle est la loi de Z ?
+4. Retrouver ce résultat en raisonnant en termes de temps de premier succès.
+
+
+soit X uen variable aleatoire geometrique de parametre p , on defint  la v.a Y par Y=X/2 si X est pair et 0 sinon
+donner la valeur de Y pour X=1 et X=3
+ */
+
+
+  {/* <div className="grid  w-full lg:max-w-sm items-center gap-1.5">
+        <Label
+          className="w-full h-[250px] border-[2px] border-forthColor rounded-md !border-dashed"
+          htmlFor="picture"
+        >
+          <div className="w-full flex flex-col justify-center items-center text-forthColor/40 font-bold h-full gap-3">
+            <p className="text-3xl">
+              <SlCloudUpload></SlCloudUpload>
+            </p>
+            <p>
+              clicquer pour importer une image relatif à l&apos;information{" "}
+            </p>
+          </div>
+        </Label>
+        <Input
+          id="picture"
+          type="file"
+          className="file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 hidden"
+        />
+      </div> */}
+
+
+
+
+
+
+     
+
+" L'un des moments les plus passionnants a été la création d'un formulaire de suggestion d'informations, où nous avons combiné de formidables outils pour atteindre cet objectif.
+
+Nous avons utilisé une impressionnante combinaison de TypeScript, Next.js, Chakra UI, React Hook Form, ainsi que Zod pour donner vie à ce formulaire. Cette expérience démontrait à quel point le pouvoir de ces outils peut être décuplé grâce à une approche intégrée et synergique.
+
+Je suis ravi de voir comment ces technologies ont joué un rôle essentiel dans la construction d'une solution qui, je l'espère, profitera grandement à la communauté étudiante de l'université. Cherchant sans cesse à repousser les limites et à favoriser le progrès, je suis convaincu que ces outils constituent le fondement d'une expérience académique améliorée pour les étudiants.
+
+#DéveloppementD'Application #ExpérienceÉtudiante #Technologie #Innovation"
+
+N'hésite pas à ajuster cela selon tes préférences ou à me demander des modifications supplémentaires !
+
+========================
+
+
+C'est tellement excitant de faire du développement moderne !
+
+Récemment, j'ai eu le plaisir de vous faire part du développement d'une application visant à améliorer l'expérience académique des étudiants de l'Université de Douala.
+
+L'un des moments les plus passionnants dans le développement du projet est la création d'un formulaire de suggestion d'informations, où j'ai combiné d'excellents outils pour atteindre cet objectif.
+
+J'ai en effet utilisé une combinaison de #shadcn (Tailwind), #ReactHookForm et #Zod, le tout couplé à du #Typescript dans un projet #Nextjs pour donner vie à ce formulaire, et le résultat me plaît beaucoup.
+
+Technologies utilisées :
+🚀 Next.js & TypeScript : Une combinaison puissante pour le développement web moderne avec un typage statique.
+
+🎨 Shadcn : Pour des styles dynamiques et élégants, apportant une touche de créativité à l'interface utilisateur.
+
+📋 React Hook Form & Zod : Une solution complète pour gérer les formulaires de manière réactive et avec une validation robuste.
+
+Ce n'est que le début de notre application, mais le résultat me plaît beaucoup.
+
+#DéveloppementLogiciel, #ExpérienceÉtudiante #Technologie #NextJS #TypeScript #ReactHookForm #Zod #Shadcn #DéveloppementWebModerne #InnovationAcadémique
+
+
+
+
+
