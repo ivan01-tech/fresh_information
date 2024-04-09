@@ -12,9 +12,17 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { BsGoogle } from "react-icons/bs";
+import Link from "next/link";
 
 export default function LoginAccount() {
+  // const googleAuthFoo = () => {
+  //   if (typeof window !== "undefined") {
+  //     window.open(
+  //       `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/google/callback`,
+  //       "_self"
+  //     );
+  //   }
+  // };
   return (
     <div className="relative flex flex-col justify-center items-center min-h-screen overflow-hidden">
       <div className="w-full m-auto bg-white lg:max-w-lg">
@@ -51,7 +59,7 @@ export default function LoginAccount() {
           <CardFooter className="flex flex-col">
             <Button className="w-full">Login</Button>
           </CardFooter>
-          <div className="relative mb-2">
+          {/* <div className="relative mb-2">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
             </div>
@@ -60,17 +68,19 @@ export default function LoginAccount() {
                 Or continue with
               </span>
             </div>
-          </div>
-          <div className="grid grid-cols-1 gap-6 my-4 m-2">
-            <Button variant="outline">
+          </div> */}
+          {/* <div className="grid grid-cols-1 gap-6 my-4 m-2">
+            <Button variant="outline" onClick={googleAuthFoo}>
               <BsGoogle className="mr-2 h-4 w-4" />
               Google
             </Button>
-          </div>
+          </div> */}
 
           <p className="mt-2 text-xs text-center text-gray-700 mb-2">
             {" Don't have an account? "}
-            <span className=" text-secondary hover:underline">Sign up</span>
+            <Link href={"/sign-up"} className=" text-secondary hover:underline">
+              Sign up
+            </Link>
           </p>
         </Card>
       </div>

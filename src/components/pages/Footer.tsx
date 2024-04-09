@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import Link from "next/link";
 
 export default function Footer() {
@@ -24,8 +25,7 @@ export default function Footer() {
             numérique intégrée ! Du partage d'informations à la création
             hebdomadaire de programmes par les administrateurs, en passant par
             la récupération aisée des relevés de notes, Digital Campus offre une
-            connectivité transparente au cœur de l'apprentissage. Ensemble,
-            façonnons le futur de l'éducation digitale !
+            connectivité transparente au cœur de l'apprentissage.
           </p>
           {/* <div className="flex mt-4">
             <Input type="email" placeholder="Email" />

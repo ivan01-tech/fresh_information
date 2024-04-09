@@ -573,12 +573,6 @@ export function generateAcronym(phrase: string): string {
   return acronym;
 }
 
-// const niveaux = {
-//   faculte,
-//   filiere,
-//   cycle,
-//   niveau,
-// };
 interface Level {
   value: string;
   label: string;

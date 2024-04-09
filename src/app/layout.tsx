@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 import Header from "@/components/pages/Nav3";
 
 import Footer from "@/components/pages/Footer";
+import Navbar from "@/components/pages/NaviagtionMenu";
 
 export default function RootLayout({
   children,
@@ -21,8 +22,8 @@ export default function RootLayout({
 
   const title = SidebarLink.find((prev) => prev.path == router)?.title;
   const pathnam = usePathname();
-
-  const cantShowHeader = !["/sign-up", "/log-in"].includes(pathnam);
+  const cantShowHeader = ["auth/signup", "auth/login"].includes(pathnam);
+  console.log("path: ", pathnam, cantShowHeader);
 
   return (
     <html lang="en">
@@ -43,12 +44,13 @@ export default function RootLayout({
       />
       <body className={"bg-slate-50  "}>
         <ChakraProvider>
-          {cantShowHeader && <Header></Header>}
-          {/* <Header></Header> */}
-
+          {/* {cantShowHeader && <Header></Header>} */}
+          {/* {<Header />} */}
+          <Navbar />
           {children}
 
-          {cantShowHeader && <Footer />}
+          {/* {cantShowHeader && <Footer />} */}
+          {<Footer />}
         </ChakraProvider>
         <Toaster />
       </body>

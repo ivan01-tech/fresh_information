@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { GithubIcon, Link as LinkIcon, Linkedin } from "lucide-react";
 import Image from "next/image";
 import React from "react";
